@@ -95,8 +95,8 @@ jobs:
         # git clone https://github.com/sbwml/v2ray-geodata
         rm -rf feeds/packages/net/smartdns
         svn export https://github.com/leesuncom/custom/trunk/package/smartdns
-        svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-mosdns
-        svn export https://github.com/kenzok8/openwrt-packages/trunk/mosdns
+        svn export https://github.com/kenzok8/openwrt-packages/trunk/master/luci-app-mosdns
+        svn export https://github.com/kenzok8/openwrt-packages/trunk/master/mosdns
         # git clone -b js https://github.com/gngpp/luci-theme-design
         # git clone https://github.com/kongfl888/luci-app-adguardhome
         # svn export https://github.com/leesuncom/custom/trunk/package/smartdns
