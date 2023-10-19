@@ -89,6 +89,7 @@ jobs:
         cd openwrt/package
         
         # 1.luci-app-openclash
+        rm -rf feeds/luci/applications/luci-app-openclash
         svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash
         
         # 2.luci-theme-argon
