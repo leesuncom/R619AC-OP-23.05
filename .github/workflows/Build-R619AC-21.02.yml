@@ -93,6 +93,7 @@ jobs:
         svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash
         
         # 2.luci-theme-argon
+        git clone -b js https://github.com/sirpdboy/luci-theme-kucat.git
         # git clone https://github.com/jerrykuku/luci-theme-argon.git
         # git clone https://github.com/jerrykuku/luci-app-argon-config.git
 
@@ -213,6 +214,7 @@ jobs:
 
         # LuCI主题:
         cat >> .config <<EOF
+        CONFIG_PACKAGE_luci-theme-kucat=y
         CONFIG_PACKAGE_luci-theme-argon=y
         EOF
 
