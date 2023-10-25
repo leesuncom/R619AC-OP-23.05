@@ -98,10 +98,10 @@ jobs:
         # git clone https://github.com/jerrykuku/luci-app-argon-config.git
 
         # 3.域名加速（一）
-        # rm -rf feeds/packages/net/v2ray-geodata
-        # rm -rf feeds/packages/net/mosdns
-        # git clone https://github.com/sbwml/luci-app-mosdns -b v5
-        # git clone https://github.com/sbwml/v2ray-geodata
+        rm -rf feeds/packages/net/v2ray-geodata
+        rm -rf feeds/packages/net/mosdns
+        git clone https://github.com/sbwml/luci-app-mosdns -b v5
+        git clone https://github.com/sbwml/v2ray-geodata
         
         # 4.域名加速（二）
         rm -rf feeds/luci/applications/luci-app-smartdns
