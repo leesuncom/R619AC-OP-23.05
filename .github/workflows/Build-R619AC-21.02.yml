@@ -88,37 +88,40 @@ jobs:
         ls
         cd openwrt/package
         
-        # 1.luci-app-openclash
+        # 1.走遍天下
         rm -rf feeds/luci/applications/luci-app-openclash
         svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash
         
-        # 2.luci-theme-argon
+        # 2.主题
         git clone -b js https://github.com/sirpdboy/luci-theme-kucat.git
         # git clone https://github.com/jerrykuku/luci-theme-argon.git
         # git clone https://github.com/jerrykuku/luci-app-argon-config.git
 
-        # 3.luci-app-mosdns
+        # 3.域名加速（一）
         # rm -rf feeds/packages/net/v2ray-geodata
         # rm -rf feeds/packages/net/mosdns
         # git clone https://github.com/sbwml/luci-app-mosdns -b v5
         # git clone https://github.com/sbwml/v2ray-geodata
         
-        # 4.luci-app-smartdns
+        # 4.域名加速（二）
         rm -rf feeds/luci/applications/luci-app-smartdns
         rm -rf feeds/packages/net/smartdns
         # git clone https://github.com/pymumu/luci-app-smartdns
         git clone https://github.com/leesuncom/luci-app-smartdns.git
         svn export https://github.com/leesuncom/custom/trunk/package/smartdns        
 
-        # 5.luci-app-adguardhome
+        # 5.广告拦截
         # git clone https://github.com/kongfl888/luci-app-adguardhome
 
-        # 6.luci-app-alist
+        # 6.网盘映射
         # git clone https://github.com/sbwml/luci-app-alist
 
-        # 7.passwall
+        # 7.逛世界
         # git clone https://github.com/xiaorouji/openwrt-passwall
         # git clone https://github.com/xiaorouji/openwrt-passwall-packages.git
+        
+        # 8智能机器人
+        git clone https://github.com/sirpdboy/chatgpt-web.git
 
     - name: FilePatch
       run: |
@@ -195,21 +198,24 @@ jobs:
 
         # LuCI插件选择:
         cat >> .config <<EOF
-        # CONFIG_PACKAGE_luci-app-commands=y
+        CONFIG_PACKAGE_luci-app-chatgpt=y
         CONFIG_PACKAGE_luci-app-ttyd=y
         CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-ddns=y
         CONFIG_PACKAGE_luci-app-firewall=y
-        CONFIG_PACKAGE_luci-app-ramfree=y
         CONFIG_PACKAGE_luci-app-smartdns=y
-        # CONFIG_PACKAGE_luci-app-mosdns=y
         CONFIG_PACKAGE_luci-app-turboacc=y
+        CONFIG_PACKAGE_luci-app-udpxy=y
         CONFIG_PACKAGE_luci-app-upnp=y
         CONFIG_PACKAGE_luci-app-vlmcsd=y
         CONFIG_PACKAGE_luci-app-wol=y
         CONFIG_PACKAGE_luci-app-openclash=y
-        # CONFIG_PACKAGE_luci-app-passwall=y
         CONFIG_PACKAGE_luci-app-argon-config=y
+        # CONFIG_PACKAGE_luci-app-ramfree=y
+        # CONFIG_PACKAGE_luci-app-passwall=y
+        # CONFIG_PACKAGE_luci-app-mosdns=y
+        # CONFIG_PACKAGE_luci-app-commands=y
+        # CONFIG_PACKAGE_luci-app-adguardhome is not set
         EOF
 
         # LuCI主题:
