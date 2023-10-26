@@ -110,7 +110,7 @@ jobs:
         # git clone https://github.com/pymumu/luci-app-smartdns.git
         svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-smartdns luci-app-smartdns
         # git clone https://github.com/leesuncom/luci-app-smartdns.git
-        svn export https://github.com/leesuncom/custom/trunk/package/smartdns smartdns      
+        # svn export https://github.com/leesuncom/custom/trunk/package/smartdns smartdns      
 
         # 5.广告拦截
         # git clone https://github.com/kongfl888/luci-app-adguardhome
@@ -123,7 +123,7 @@ jobs:
         # git clone https://github.com/xiaorouji/openwrt-passwall-packages.git
         
         # 8智能机器人
-        git clone https://github.com/sirpdboy/chatgpt-web.git luci-app-chatgpt
+        # git clone https://github.com/sirpdboy/chatgpt-web.git luci-app-chatgpt
 
     - name: FilePatch
       run: |
@@ -200,7 +200,7 @@ jobs:
 
         # LuCI插件选择:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_luci-app-chatgpt=y
+        # CONFIG_PACKAGE_luci-app-chatgpt=y
         CONFIG_PACKAGE_luci-app-ttyd=y
         CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-ddns=y
