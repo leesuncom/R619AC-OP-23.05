@@ -87,7 +87,8 @@ jobs:
       run: |
         ls
         cd openwrt/package
-        
+        mkdir NeoBird
+        cd NeoBird
         # 1.走遍天下
         rm -rf feeds/luci/applications/luci-app-openclash
         svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash
