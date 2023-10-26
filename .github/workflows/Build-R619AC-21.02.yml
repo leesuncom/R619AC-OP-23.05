@@ -91,7 +91,7 @@ jobs:
         cd NeoBird
         # 1.走遍天下
         rm -rf feeds/luci/applications/luci-app-openclash
-        svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash
+        svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash luci-app-openclash
         
         # 2.主题
         # git clone -b js https://github.com/sirpdboy/luci-theme-kucat.git
@@ -108,9 +108,9 @@ jobs:
         rm -rf feeds/luci/applications/luci-app-smartdns
         rm -rf feeds/packages/net/smartdns
         # git clone https://github.com/pymumu/luci-app-smartdns.git
-        svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-smartdns
+        svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-smartdns luci-app-smartdns
         # git clone https://github.com/leesuncom/luci-app-smartdns.git
-        svn export https://github.com/leesuncom/custom/trunk/package/smartdns        
+        svn export https://github.com/leesuncom/custom/trunk/package/smartdns smartdns      
 
         # 5.广告拦截
         # git clone https://github.com/kongfl888/luci-app-adguardhome
@@ -123,7 +123,7 @@ jobs:
         # git clone https://github.com/xiaorouji/openwrt-passwall-packages.git
         
         # 8智能机器人
-        git clone https://github.com/sirpdboy/chatgpt-web.git
+        git clone https://github.com/sirpdboy/chatgpt-web.git luci-app-chatgpt
 
     - name: FilePatch
       run: |
