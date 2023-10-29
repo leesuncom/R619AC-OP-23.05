@@ -108,8 +108,8 @@ jobs:
         rm -rf feeds/luci/applications/luci-app-smartdns
         rm -rf feeds/packages/net/smartdns
         # git clone https://github.com/pymumu/luci-app-smartdns
-        # svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-smartdns
-        git clone https://github.com/leesuncom/luci-app-smartdns.git
+        svn export https://github.com/kenzok8/openwrt-packages/trunk/luci-app-smartdns
+        # git clone https://github.com/leesuncom/luci-app-smartdns.git
         # svn export https://github.com/leesuncom/custom/trunk/package/smartdns
 
         # 5.广告拦截
@@ -217,7 +217,7 @@ jobs:
         # CONFIG_PACKAGE_luci-app-ramfree=y
         # CONFIG_PACKAGE_luci-app-passwall=y
         # CONFIG_PACKAGE_luci-app-mosdns=y
-        # CONFIG_PACKAGE_luci-app-commands=y
+        CONFIG_PACKAGE_luci-app-zerotier=y
         # CONFIG_PACKAGE_luci-app-adguardhome is not set
         EOF
 
