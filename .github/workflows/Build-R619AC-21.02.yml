@@ -100,15 +100,16 @@ jobs:
 
         # 3.域名加速（一）
         rm -rf feeds/packages/net/v2ray-geodata
+        rm -rf feeds/packages/net/mosdns
         git clone https://github.com/sbwml/luci-app-mosdns -b v5
         git clone https://github.com/sbwml/v2ray-geodata
         
         # 4.域名加速（二）
         # rm -rf feeds/luci/applications/luci-app-smartdns
-        # rm -rf feeds/packages/net/smartdns
+        rm -rf feeds/packages/net/smartdns
         # git clone -b master https://github.com/pymumu/luci-app-smartdns.git luci-app-smartdns
         # git clone https://github.com/pymumu/smartdns.git smartdns 
-        # svn export https://github.com/leesuncom/custom/trunk/package/smartdns
+        svn export https://github.com/leesuncom/custom/trunk/package/smartdns
 
         # 5.广告拦截
         git clone https://github.com/kongfl888/luci-app-adguardhome
