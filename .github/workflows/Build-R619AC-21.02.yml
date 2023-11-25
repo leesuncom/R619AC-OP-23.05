@@ -101,6 +101,7 @@ jobs:
         # 3.域名加速（一）
         # rm -rf feeds/packages/net/v2ray-geodata
         # rm -rf feeds/packages/net/mosdns
+        svn export https://github.com/haiibo/openwrt-packages/trunk/luci-app-mosdns
         # git clone https://github.com/sbwml/luci-app-mosdns -b v5
         # git clone https://github.com/sbwml/v2ray-geodata
         
