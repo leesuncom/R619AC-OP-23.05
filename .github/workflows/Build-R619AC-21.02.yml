@@ -105,7 +105,7 @@ jobs:
         svn export https://github.com/haiibo/openwrt-packages/trunk/luci-app-mosdns
         svn export https://github.com/haiibo/openwrt-packages/trunk/mosdns
         # git clone https://github.com/sbwml/luci-app-mosdns -b v5
-        # git clone https://github.com/sbwml/v2ray-geodata
+        git clone https://github.com/sbwml/v2ray-geodata
         
         # 4.域名加速（二）
         # rm -rf feeds/luci/applications/luci-app-smartdns
