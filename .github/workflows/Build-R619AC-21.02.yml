@@ -130,9 +130,12 @@ jobs:
       run: |
         cd openwrt
         rm -rf feeds/luci/applications/luci-app-smartdns
+        git clone -b master https://github.com/pymumu/luci-app-smartdns.git feeds/luci/applications/luci-app-smartdns
+        # rm -rf luci-app-smartdns/.git/
         rm -rf feeds/packages/net/smartdns
         rm -rf feeds/kiddin9/smartdns
-        git clone -b 23.05 https://github.com/leesuncom/smartdns.git feeds/kiddin9/smartdns
+        git clone -b 23.05 https://github.com/leesuncom/smartdns.git feeds/packages/net/smartdns
+        # rm -rf smartdns/.git/
         rm -rf feeds/packages/net/adguardhome
         rm -rf feeds/kiddin9/adguardhome
         
