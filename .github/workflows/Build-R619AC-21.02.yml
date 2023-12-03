@@ -132,7 +132,7 @@ jobs:
         rm -rf feeds/luci/applications/luci-app-smartdns
         rm -rf feeds/packages/net/smartdns
         rm -rf feeds/kiddin9/smartdns
-        git clone -b 23.05 https://github.com/leesuncom/smartdns.git
+        git clone -b 23.05 https://github.com/leesuncom/smartdns.git feeds/kiddin9/smartdns
         rm -rf feeds/packages/net/adguardhome
         rm -rf feeds/kiddin9/adguardhome
         
