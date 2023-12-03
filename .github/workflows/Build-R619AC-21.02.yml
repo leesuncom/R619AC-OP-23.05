@@ -216,18 +216,17 @@ jobs:
 
         # LuCI主题:
         cat >> .config <<EOF
-        # CONFIG_PACKAGE_luci-theme-kucat=y
         CONFIG_PACKAGE_luci-theme-argon=y
         EOF
 
         # 常用软件包:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_irqbalance=y
-        CONFIG_PACKAGE_autocore-arm=y
-        CONFIG_PACKAGE_e2fsprogs=y
-        CONFIG_PACKAGE_firewall4=y
-        CONFIG_PACKAGE_miniupnpd-nftables=y
-        # CONFIG_PACKAGE_adguardhome is not set
+        CONFIG_PACKAGE_irqbalance= is not set
+        CONFIG_PACKAGE_autocore-arm is not set
+        CONFIG_PACKAGE_e2fsprogs is not set
+        CONFIG_PACKAGE_firewall4 is not set
+        CONFIG_PACKAGE_miniupnpd-nftables is not set
+        CONFIG_PACKAGE_adguardhome is not set
         EOF
 
         # 取消编译VMware镜像以及镜像填充 (不要删除被缩进的注释符号):
