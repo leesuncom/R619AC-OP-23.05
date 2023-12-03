@@ -97,18 +97,17 @@ jobs:
         # git clone https://github.com/sbwml/luci-app-mosdns -b v5
         # git clone https://github.com/sbwml/v2ray-geodata
         
-        # 4.域名加速（二）
-        rm -rf feeds/luci/applications/luci-app-smartdns
-        rm -rf feeds/packages/net/smartdns
-        rm -rf feeds/kiddin9/smartdns
+        # 4.域名加速（二）    
         # git clone -b master https://github.com/pymumu/luci-app-smartdns.git luci-app-smartdns
         # git clone https://github.com/pymumu/smartdns.git smartdns 
         git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
+        
         # 5.广告拦截
-        rm -rf feeds/kiddin9/adguardhome
         # git clone https://github.com/kongfl888/luci-app-adguardhome
+        
         # 6.网盘映射
         # git clone https://github.com/sbwml/luci-app-alist
+        
     - name: FilePatch
       run: |
         cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
@@ -128,6 +127,10 @@ jobs:
     - name: FilePatch2
       run: |
         cd openwrt
+        rm -rf feeds/luci/applications/luci-app-smartdns
+        rm -rf feeds/packages/net/smartdns
+        rm -rf feeds/kiddin9/smartdns
+        rm -rf feeds/packages/net/adguardhome
         rm -rf feeds/kiddin9/adguardhome
         # rm -rf feeds/packages/lang/golang
         # svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang feeds/packages/lang/golang
