@@ -113,8 +113,7 @@ jobs:
       run: |
         cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
         cd openwrt
-        sed -i '1i src-git kiddin9 https://github.com/kiddin9/openwrt-packages' feeds.conf.default
-        # rm -rf feeds/kiddin9/adguardhome
+        sed -i '$a src-git kiddin9 https://github.com/kiddin9/openwrt-packages' feeds.conf.default
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
         sed -i "s/hostname='.*'/hostname='NeoBird'/g" ./package/base-files/files/bin/config_generate
         # sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
@@ -122,12 +121,14 @@ jobs:
         sed -i "s/timezone='.*'/timezone='CST-8'/g" ./package/base-files/files/bin/config_generate
         sed -i "/timezone='.*'/a\\\t\t\set system.@system[-1].zonename='Asia/Shanghai'" ./package/base-files/files/bin/config_generate
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
+        
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
 
     - name: FilePatch2
       run: |
-          rm -rf feeds/kiddin9/adguardhome
+        cd openwrt
+        rm -rf feeds/kiddin9/adguardhome
         # rm -rf feeds/packages/lang/golang
         # svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang feeds/packages/lang/golang
         # rm -rf feeds/packages/lang/golang
