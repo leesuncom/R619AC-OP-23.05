@@ -92,13 +92,14 @@ jobs:
         # 2.主题
         # git clone https://github.com/jerrykuku/luci-theme-argon.git
         # git clone https://github.com/jerrykuku/luci-app-argon-config.git
+        
         # 3.域名加速（一）
         # rm -rf feeds/packages/net/v2ray-geodata
         # git clone https://github.com/sbwml/luci-app-mosdns -b v5
         # git clone https://github.com/sbwml/v2ray-geodata
         
         # 4.域名加速（二）    
-        # git clone -b master https://github.com/pymumu/luci-app-smartdns.git luci-app-smartdns
+        # git clone -b master https://github.com/pymumu/luci-app-smartdns.git
         # git clone https://github.com/pymumu/smartdns.git smartdns 
         git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
         
@@ -114,9 +115,7 @@ jobs:
         cd openwrt
         sed -i '$a src-git kiddin9 https://github.com/kiddin9/openwrt-packages' feeds.conf.default
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
-        sed -i "s/hostname='.*'/hostname='NeoBird'/g" ./package/base-files/files/bin/config_generate
-        # sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
-        # sed -i 's/OpenWrt/NeoBird/g' ./package/base-files/files/bin/config_generate
+        sed -i 's/OpenWrt/NeoBird/g' package/base-files/files/bin/config_generate
         sed -i "s/timezone='.*'/timezone='CST-8'/g" ./package/base-files/files/bin/config_generate
         sed -i "/timezone='.*'/a\\\t\t\set system.@system[-1].zonename='Asia/Shanghai'" ./package/base-files/files/bin/config_generate
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
