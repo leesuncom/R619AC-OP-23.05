@@ -93,8 +93,8 @@ jobs:
         # svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash luci-app-openclash
         
         # 2.主题
-        git clone https://github.com/jerrykuku/luci-theme-argon.git
-        git clone https://github.com/jerrykuku/luci-app-argon-config.git
+        # git clone https://github.com/jerrykuku/luci-theme-argon.git
+        # git clone https://github.com/jerrykuku/luci-app-argon-config.git
 
         # 3.域名加速（一）
         # rm -rf feeds/packages/net/v2ray-geodata
