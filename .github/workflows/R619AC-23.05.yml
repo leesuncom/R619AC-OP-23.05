@@ -136,6 +136,9 @@ jobs:
 
         ########### 修改immortal的内置的luci-app-adguardhome版本 ###########
         svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-adguardhome luci-app-adguardhome
+
+        ########### 修改immortal的内置的luci-app-ddns-go版本 ###########
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-ddns-go luci-app-ddns-go
         
     - name: 文件修补一
       run: |        
@@ -217,13 +220,13 @@ jobs:
         # LuCI插件选择:
         cat >> .config <<EOF
         CONFIG_PACKAGE_luci-app-arpbind=y
-        # CONFIG_PACKAGE_luci-app-adguardhome is not set
+        CONFIG_PACKAGE_luci-app-adguardhome=y
         CONFIG_PACKAGE_luci-app-iptvhelper=y
         CONFIG_PACKAGE_luci-app-ddns-go=y
         # CONFIG_PACKAGE_luci-app-cpufreq is not set
         # CONFIG_PACKAGE_luci-app-aliddns is not set
         CONFIG_PACKAGE_luci-app-mosdns=y
-        # CONFIG_PACKAGE_luci-app-openclash=y
+        CONFIG_PACKAGE_luci-app-openclash=y
         CONFIG_PACKAGE_luci-app-argon-config=y
         CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-commands=y
