@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: OpenWrt-23.05 OPENWRT
+name: OpenWrt-23.05-R619AC
 
 on:
   repository_dispatch:
@@ -86,7 +86,7 @@ jobs:
       run: |
         ls
         cd openwrt/package
-        cd openwrt/package
+
         git clone https://github.com/kiddin9/openwrt-packages
         
     - name: 文件修补一
