@@ -84,54 +84,25 @@ jobs:
       run: |
         ls
         cd openwrt/package
-        mkdir NeoBird
-        cd NeoBird
-        # 1.走遍天下
-        rm -rf feeds/luci/applications/luci-app-openclash
-        svn export https://github.com/leesuncom/OpenClash/trunk/luci-app-openclash luci-app-openclash
-        
-        # 2.主题
-        # git clone -b js https://github.com/sirpdboy/luci-theme-kucat.git
-        # git clone https://github.com/jerrykuku/luci-theme-argon.git
-        # git clone https://github.com/jerrykuku/luci-app-argon-config.git
-        # 3.域名加速（一）
-        # rm -rf feeds/packages/net/v2ray-geodata
-        # git clone https://github.com/sbwml/luci-app-mosdns -b v5
-        # git clone https://github.com/sbwml/v2ray-geodata
-        
-        # 4.域名加速（二）
-        # rm -rf feeds/luci/applications/luci-app-smartdns
-        # rm -rf feeds/packages/net/smartdns
-        # git clone -b master https://github.com/pymumu/luci-app-smartdns.git luci-app-smartdns
-        # git clone https://github.com/pymumu/smartdns.git smartdns 
-        # svn export https://github.com/leesuncom/custom/trunk/package/smartdns
-        # 5.广告拦截
-        git clone https://github.com/kongfl888/luci-app-adguardhome
-        # 6.网盘映射
-        # git clone https://github.com/sbwml/luci-app-alist
-        # 7.逛世界
-        # git clone https://github.com/xiaorouji/openwrt-passwall
-        # git clone https://github.com/xiaorouji/openwrt-passwall-packages.git
-        
-        # 8智能机器人
-        # git clone https://github.com/sirpdboy/chatgpt-web.git luci-app-chatgpt
+        git clone https://github.com/kiddin9/openwrt-packages
+    
     - name: FilePatch
       run: |
-        # cp -r -f patch/mosdns /feeds/packages/net/mosdns
         cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
         cd openwrt
-        sed -i "22i chmod 755 /etc/smartdns/up.sh" package/emortal/default-settings/files/99-default-settings-chinese
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
-        sed -i "s/hostname='.*'/hostname='NeoBird'/g" ./package/base-files/files/bin/config_generate
+        sed -i 's/OpenWrt/NeoBird/g' package/base-files/files/bin/config_generate
         sed -i "s/timezone='.*'/timezone='CST-8'/g" ./package/base-files/files/bin/config_generate
         sed -i "/timezone='.*'/a\\\t\t\set system.@system[-1].zonename='Asia/Shanghai'" ./package/base-files/files/bin/config_generate
+        sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
+        
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
 
     - name: FilePatch2
       run: |
-        rm -rf feeds/packages/lang/golang
-        svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang feeds/packages/lang/golang
+        # rm -rf feeds/packages/lang/golang
+        # svn co https://github.com/openwrt/packages/branches/openwrt-23.05/lang/golang feeds/packages/lang/golang
         # rm -rf feeds/packages/lang/golang
         # it clone https://github.com/sbwml/packages_lang_golang -b 20.x feeds/packages/lang/golang
         
