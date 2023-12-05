@@ -138,8 +138,16 @@ jobs:
         svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-adguardhome luci-app-adguardhome
 
         ########### 修改immortal的内置的luci-app-ddns-go版本 ###########
-        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-ddns-go luci-app-ddns-go
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-ddns-go luci-app-ddns-go        
         svn export https://github.com/kiddin9/openwrt-packages/trunk/ddns-go ddns-go
+
+        ########### 修改immortal的内置的luci-app-ddns-go版本 ###########
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-vlmcsd luci-app-vlmcsd       
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/vlmcsd vlmcsd 
+
+        ########### 修改immortal的内置的luci-app-ddns-go版本 ###########
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-argon-config luci-app-argon-config       
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-theme-argon luci-theme-argon
         
     - name: 文件修补一
       run: |        
@@ -220,7 +228,7 @@ jobs:
         
         # LuCI插件选择:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_luci-app-arpbind=y
+        # CONFIG_PACKAGE_luci-app-arpbind=y
         CONFIG_PACKAGE_luci-app-adguardhome=y
         CONFIG_PACKAGE_luci-app-iptvhelper=y
         CONFIG_PACKAGE_luci-app-ddns-go=y
@@ -229,12 +237,12 @@ jobs:
         CONFIG_PACKAGE_luci-app-mosdns=y
         CONFIG_PACKAGE_luci-app-openclash=y
         CONFIG_PACKAGE_luci-app-argon-config=y
-        CONFIG_PACKAGE_luci-app-autoreboot=y
+        # CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-commands=y
         CONFIG_PACKAGE_luci-app-opkg=y
         # CONFIG_PACKAGE_luci-app-ddns is not set
         CONFIG_PACKAGE_luci-app-firewall=y
-        CONFIG_PACKAGE_luci-app-filetransfer=y
+        # CONFIG_PACKAGE_luci-app-filetransfer=y
         # CONFIG_PACKAGE_luci-app-passwall=y
         # CONFIG_PACKAGE_luci-app-pushbot is not set
         # CONFIG_PACKAGE_luci-app-ramfree is not set
