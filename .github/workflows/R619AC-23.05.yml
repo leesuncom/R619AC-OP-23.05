@@ -139,6 +139,7 @@ jobs:
 
         ########### 修改immortal的内置的luci-app-ddns-go版本 ###########
         svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-ddns-go luci-app-ddns-go
+        svn export https://github.com/kiddin9/openwrt-packages/trunk/ddns-go ddns-go
         
     - name: 文件修补一
       run: |        
