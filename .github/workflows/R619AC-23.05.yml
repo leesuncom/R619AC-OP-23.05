@@ -98,6 +98,8 @@ jobs:
       run: |        
         # cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
         cd openwrt
+        sed -i '/DISTRIB_DESCRIPTION/d' /etc/openwrt_release
+        echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> /etc/openwrt_release
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
         sed -i 's/ImmortalWrt/NeoBird/g' package/base-files/files/bin/config_generate        
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
@@ -214,6 +216,7 @@ jobs:
         
         # 常用软件包:
         cat >> .config <<EOF
+        CONFIG_PACKAGE_luci-ssl=y
         CONFIG_PACKAGE_autocore=y
         # CONFIG_PACKAGE_automount is not set
         # CONFIG_PACKAGE_autosamba is not set
