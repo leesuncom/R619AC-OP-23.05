@@ -220,6 +220,16 @@ jobs:
         
         # 常用软件包:
         cat >> .config <<EOF
+        CONFIG_PACKAGE_iptables-mod-extra=y
+        CONFIG_PACKAGE_iptables-mod-tproxy=y
+        CONFIG_PACKAGE_kmod-ipt-nat=y
+        CONFIG_PACKAGE_kmod-inet-diag=y
+        CONFIG_PACKAGE_unzip=y
+        CONFIG_PACKAGE_kmod-tun=y
+        CONFIG_PACKAGE_ruby-yaml=y
+        CONFIG_PACKAGE_libruby=y
+        CONFIG_PACKAGE_libcap-bin=y
+        CONFIG_PACKAGE_libcap-bin-capsh-shell="/bin/sh"
         CONFIG_PACKAGE_ip-full=y
         CONFIG_PACKAGE_kmod-ipt-ipset=y
         CONFIG_PACKAGE_libipset=y
