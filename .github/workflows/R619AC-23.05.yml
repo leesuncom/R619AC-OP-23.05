@@ -90,7 +90,7 @@ jobs:
         cd openwrt/package
         mkdir NeoBird
         cd NeoBird
-        
+        git clone https://github.com/leesuncom/package.git
         # git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
         git clone https://github.com/kiddin9/openwrt-packages.git   
         
@@ -216,6 +216,7 @@ jobs:
         
         # 常用软件包:
         cat >> .config <<EOF
+        CONFIG_PACKAGE_default-settings-chn=y
         CONFIG_PACKAGE_uhttpd=y
         CONFIG_PACKAGE_uhttpd-mod-ubus=y
         CONFIG_PACKAGE_luci=y
