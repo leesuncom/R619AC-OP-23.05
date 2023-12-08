@@ -100,7 +100,12 @@ jobs:
         sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
         echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
-        sed -i 's/ImmortalWrt/NeoBird/g' package/base-files/files/bin/config_generate        
+        sed -i 's/OpenWrt/NeoBird/g' package/base-files/files/bin/config_generate
+        sed -i 's/UTC/Asia/Shanghai/g' package/base-files/files/bin/config_generate
+        sed -i 's/0.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
+        sed -i 's/1.openwrt.pool.ntp.orgt/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
+        sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
+        sed -i 's/3.openwrt.pool.ntp.org/cn.ntp.org.cn/g' package/base-files/files/bin/config_generate
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
         
     - name: 更新订阅源
@@ -181,7 +186,7 @@ jobs:
         # CONFIG_PACKAGE_luci-app-cpufreq is not set
         # CONFIG_PACKAGE_luci-app-aliddns is not set
         CONFIG_PACKAGE_luci-app-mosdns=y
-        # CONFIG_PACKAGE_luci-app-openclash=y
+        CONFIG_PACKAGE_luci-app-openclash=y
         CONFIG_PACKAGE_luci-app-argon-config=y
         # CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-commands=y
