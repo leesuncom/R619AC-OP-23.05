@@ -226,6 +226,7 @@ jobs:
         CONFIG_PACKAGE_kmod-inet-diag=y
         CONFIG_PACKAGE_unzip=y
         CONFIG_PACKAGE_kmod-tun=y
+        CONFIG_PACKAGE_ruby=y
         CONFIG_PACKAGE_ruby-yaml=y
         CONFIG_PACKAGE_libruby=y
         CONFIG_PACKAGE_libcap-bin=y
