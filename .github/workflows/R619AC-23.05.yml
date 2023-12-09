@@ -165,7 +165,7 @@ jobs:
         CONFIG_PACKAGE_luci-app-ddns-go=y
         CONFIG_PACKAGE_luci-app-autoreboot=y
         CONFIG_PACKAGE_luci-app-mosdns=y
-        CONFIG_PACKAGE_luci-app-openclash=y
+        # CONFIG_PACKAGE_luci-app-openclash=y
         CONFIG_PACKAGE_luci-app-argon-config=y
         CONFIG_PACKAGE_luci-app-ttyd=y
         # CONFIG_PACKAGE_luci-app-ddns=y
@@ -192,7 +192,7 @@ jobs:
         CONFIG_PACKAGE_autocore-arm=y
         CONFIG_PACKAGE_e2fsprogs=y
         CONFIG_PACKAGE_firewall4=y
-        CONFIG_PACKAGE_miniupnpd-nftables=y
+        # CONFIG_PACKAGE_miniupnpd-nftables=y
         EOF
 
         # 取消编译VMware镜像以及镜像填充 (不要删除被缩进的注释符号):
