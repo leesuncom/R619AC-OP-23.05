@@ -311,44 +311,7 @@ jobs:
         EOF
         
         # 常用软件包:
-        cat >> .config <<EOF
-        CONFIG_PACKAGE_iptables-mod-extra=y
-        CONFIG_PACKAGE_iptables-mod-tproxy=y
-        CONFIG_PACKAGE_kmod-ipt-nat=y
-        CONFIG_PACKAGE_kmod-inet-diag=y
-        CONFIG_PACKAGE_unzip=y
-        CONFIG_PACKAGE_kmod-tun=y
-        CONFIG_PACKAGE_ruby=y
-        CONFIG_PACKAGE_ruby-yaml=y
-        CONFIG_PACKAGE_libruby=y
-        CONFIG_PACKAGE_libcap-bin=y
-        CONFIG_PACKAGE_libcap-bin-capsh-shell="/bin/sh"
-        CONFIG_PACKAGE_ip-full=y
-        CONFIG_PACKAGE_kmod-ipt-ipset=y
-        CONFIG_PACKAGE_libipset=y
-        CONFIG_PACKAGE_ipset=y
-        CONFIG_PACKAGE_ca-bundle=y
-        CONFIG_PACKAGE_bash=y
-        CONFIG_PACKAGE_coreutils-nohup=y
-        CONFIG_PACKAGE_coreutils=y
-        CONFIG_PACKAGE_coreutils-base64=y
-        CONFIG_PACKAGE_coreutils-nohup=y
-        CONFIG_PACKAGE_dnsmasq-full=y
-        CONFIG_PACKAGE_dnsmasq_full_dhcp=y
-        CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
-        CONFIG_PACKAGE_dnsmasq_full_ipset=y
-        CONFIG_PACKAGE_dnsmasq_full_tftp=y
-        CONFIG_PACKAGE_default-settings-chn=y
-        CONFIG_PACKAGE_uhttpd=y
-        CONFIG_PACKAGE_uhttpd-mod-ubus=y
-        CONFIG_PACKAGE_luci-compat=y
-        CONFIG_PACKAGE_luci-lib-ipkg=y
-        CONFIG_LUCI_LANG_zh_Hans=y
-        CONFIG_PACKAGE_luci=y
-        CONFIG_PACKAGE_luci-base=y
-        CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
-        CONFIG_PACKAGE_luci-ssl=y
-        CONFIG_PACKAGE_autocore=y
+
         # CONFIG_PACKAGE_automount is not set
         # CONFIG_PACKAGE_autosamba is not set
         EOF
