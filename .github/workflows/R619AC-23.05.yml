@@ -157,25 +157,22 @@ jobs:
         EOF
 
         # 设置固件大小:
+        cat >> .config <<EOF
         CONFIG_TARGET_ROOTFS_PARTSIZE=1004
-
         CONFIG_ALL_NONSHARED=y
-
         CONFIG_IB=y
         CONFIG_IB_STANDALONE=y
         CONFIG_JSON_OVERVIEW_IMAGE_INFO=y
-
         CONFIG_FEED_telephony=n
-
         CONFIG_KERNEL_WERROR=n
-
+        EOF
+        
         # 其他需要安装的软件包:
-
+        cat >> .config <<EOF
         CONFIG_PACKAGE_dnsmasq=n
         CONFIG_PACKAGE_dnsmasq-full=y
         CONFIG_PACKAGE_dnsmasq_full_dhcp=y
         CONFIG_PACKAGE_dnsmasq_full_ipset=y
-  
         CONFIG_NGINX_DAV=y
         CONFIG_PACKAGE_luci-base=y
         CONFIG_PACKAGE_luci-compat=y
@@ -207,17 +204,12 @@ jobs:
         CONFIG_OPENSSL_ENGINE_BUILTIN=y
         CONFIG_OPENSSL_ENGINE_BUILTIN_AFALG=y
         CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO=y
-
         CONFIG_BUSYBOX_CUSTOM=y
         CONFIG_BUSYBOX_CONFIG_FEATURE_XARGS_SUPPORT_REPL_STR=y
         CONFIG_BUSYBOX_CONFIG_FEATURE_CROND_SPECIAL_TIMES=y
         CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
-
-
-
         CONFIG_PACKAGE_bash=y
         CONFIG_PACKAGE_ca-bundle=y
-
         CONFIG_KERNEL_CGROUP_DEVICE=y
         CONFIG_KERNEL_CGROUP_FREEZER=y
         CONFIG_KERNEL_NET_CLS_CGROUP=y
@@ -229,24 +221,16 @@ jobs:
         CONFIG_KERNEL_EXT4_FS_POSIX_ACL=y
         CONFIG_KERNEL_EXT4_FS_SECURITY=y
         CONFIG_KERNEL_BTRFS_FS_POSIX_ACL=y
-
         CONFIG_PACKAGE_kmod-drm-nouveau=n
         CONFIG_PACKAGE_kmod-rtl8821cu=n
         CONFIG_PACKAGE_kmod-rtl88x2bu=n
-
         CONFIG_PACKAGE_kmod-rtl8189es=n
-
         CONFIG_PACKAGE_kmod-sprd_pcie=n
-
         CONFIG_PACKAGE_kmod-pcie_mhi=n
-
         CONFIG_PACKAGE_kmod-mii=n
-
-
-
-
         CONFIG_IMAGEOPT=y
         CONFIG_VERSIONOPT=y
+        EOF
         
         # USB2.0支持:
         # cat >> .config <<EOF
@@ -262,11 +246,7 @@ jobs:
         
         # IPv6支持:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
-        CONFIG_PACKAGE_ip6tables=y
-        CONFIG_PACKAGE_ip6tables-extra=y
-        CONFIG_PACKAGE_ip6tables-mod-nat=y
-        CONFIG_PACKAGE_ipv6helper=y
+        CONFIG_IPV6=y
         EOF
         
         # LuCI插件选择:
