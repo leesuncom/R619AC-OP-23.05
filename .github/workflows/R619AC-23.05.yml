@@ -72,22 +72,10 @@ jobs:
       run: |
         ls
         cd openwrt/package
-        git clone https://github.com/NueXini/NueXini_Packages
-        # git clone -b js https://github.com/gngpp/luci-theme-design
-        # git clone https://github.com/tty228/luci-app-serverchan
-        # git clone https://github.com/kongfl888/luci-app-adguardhome
-        # git clone https://github.com/pymumu/luci-app-smartdns
-        # svn export https://github.com/immortalwrt/packages/trunk/net/smartdns
-        # svn export https://github.com/vernesong/OpenClash/trunk/luci-app-openclash
-        # svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/aliyundrive-webdav
-        # svn export https://github.com/messense/aliyundrive-webdav/trunk/openwrt/luci-app-aliyundrive-webdav
-        # git clone https://github.com/sbwml/luci-app-alist
-        # git clone https://github.com/xiaorouji/openwrt-passwall
-        # git clone -b luci https://github.com/xiaorouji/openwrt-passwall passwall1 && mv -n passwall1/luci-app-passwall  ./; rm -rf passwall1
-        # svn export https://github.com/kiddin9/openwrt-packages/trunk/luci-app-diskman
-        # svn export https://github.com/xiaorouji/openwrt-passwall2/trunk/luci-app-passwall2
-
-
+        mkdir NeoBird
+        cd NeoBird
+        # git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
+        git clone https://github.com/kiddin9/openwrt-packages.git
 
     - name: FilePatch
       run: |
@@ -97,10 +85,17 @@ jobs:
         cp -f patch/adjust_network openwrt/target/linux/ipq40xx/base-files/etc/init.d/adjust_network
         cp -f patch/adjust_network.sh openwrt/target/linux/ipq40xx/base-files/lib/adjust_network.sh
         cd openwrt
-        #sed -i "s/SNAPSHOT/Wing build $(TZ=UTC-8 date "+%Y.%m.%d")/g" package/default-settings/files/zzz-default-settings
-        sed '10 iuci\ set\ system.@system[0].hostname=G-Dock' -i package/default-settings/files/zzz-default-settings
-        sed '37 iuci\ set\ network.globals.packet_steering=1' -i package/default-settings/files/zzz-default-settings
-        sed -i 's/192.168.1.1/192.168.10.1/g' package/base-files/files/bin/config_generate
+        cd openwrt
+        sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
+        echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
+        sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
+        sed -i 's/OpenWrt/NeoBird/g' package/base-files/files/bin/config_generate
+        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
+        sed -i 's/0.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
+        sed -i 's/1.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
+        sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
+        sed -i 's/3.openwrt.pool.ntp.org/cn.ntp.org.cn/g' package/base-files/files/bin/config_generate
+        sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
@@ -212,7 +207,7 @@ jobs:
 
         sed -i 's/^[ \t]*//g' ./.config
         make defconfig
-        cp ./.config ./Lienol-config.bak
+        cp ./.config ./NeoBird-config.bak
 
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
@@ -244,7 +239,7 @@ jobs:
       if: (!cancelled())
       run: |
         cd openwrt/
-        mv ./Lienol-config.bak $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
+        mv ./NeoBird-config.bak $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
         df -hT
 
     - name: Upload bin directory
@@ -293,10 +288,10 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE }}/*
         body: |
-          - 默认IP：192.168.10.1
-          - 默认密码：password
-          - 当前使用版本:【编译前的最后一次[➦主源码](https://github.com/Lienol/openwrt)更新记录】
-          - 下载后请仔细校验MD5，如不正确请重新下载
+          ✅ 源码版本:23.05SNAPSHOT
+          ✅ 内核:5.15
+          ✅ 当前使用版本:【编译前的最后一次[➦主源码](${{ env.REPO_URL }})更新记录】
+          ✅ 下载后请仔细校验MD5，如不正确请重新下载
           ${{ env.useVersionInfo }}
           
           `md5sum`
