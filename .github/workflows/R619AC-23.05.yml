@@ -85,7 +85,7 @@ jobs:
         cp -f patch/adjust_network openwrt/target/linux/ipq40xx/base-files/etc/init.d/adjust_network
         cp -f patch/adjust_network.sh openwrt/target/linux/ipq40xx/base-files/lib/adjust_network.sh
         cd openwrt
-        cd openwrt
+
         sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
         echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
