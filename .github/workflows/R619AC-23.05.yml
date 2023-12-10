@@ -8,7 +8,7 @@
 # Description: Build OpenWrt using GitHub Actions
 #
 
-name: Build OpenWrt
+name: OpenWrt-23.05-R619AC
 
 on:
   repository_dispatch:
@@ -31,27 +31,49 @@ env:
 
 jobs:
   build:
-    runs-on: Ubuntu-22.04
-    if: github.event.repository.owner.id == github.event.sender.id
-    
+    runs-on: ubuntu-latest
+           
     steps:
-    - name: Checkout
-      uses: actions/checkout@main
 
-    - name: Initialization environment
+    - name: 检查服务器配置
+      uses: jlumbroso/free-disk-space@main
+      with:
+        # this might remove tools that are actually needed,
+        # if set to "true" but frees about 6 GB
+        tool-cache: true
+        
+        # all of these default to true, but feel free to set to
+        # "false" if necessary for your workflow
+        android: true
+        dotnet: true
+        haskell: true
+        large-packages: true
+        swap-storage: true
+        
+    - name: 校验
+      uses: actions/checkout@v3.1.0  
+      
+    - name: 可用磁盘空间
+      run: |
+           echo "Free space:"
+           df -h
+           
+    - name: 初始化编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        ( sudo -E apt-get -qq update
-        sudo -E apt-get -qq install $(curl -fsSL https://is.gd/depends_ubuntu_2204)
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.eu.org/init_build_environment.sh)'
         sudo -E apt-get -qq autoremove --purge
-        sudo -E apt-get -qq clean ) &
-        sudo timedatectl set-timezone "$TZ"
+        sudo -E apt-get -qq clean
         sudo -E apt-get -qq install libfuse-dev
-        #sudo mkdir -p /workdir
-        #sudo chown $USER:$GROUPS /workdir
-
-    - name: Clone source code
+        sudo timedatectl set-timezone "$TZ"
+        sudo mkdir -p /workdir
+        sudo chown $USER:$GROUPS /workdir
+        
+    - name: 克隆源码
+      working-directory: /workdir
       run: |
         df -hT $PWD
         git clone $REPO_URL -b $REPO_BRANCH openwrt
@@ -60,13 +82,7 @@ jobs:
         useVersionInfo=$(git show -s --date=short --format="Author: %an<br/>date: %cd<br/>commit: %s<br/>commit hash: %H<br/>")
         echo "useVersionInfo=$useVersionInfo" >> $GITHUB_ENV
         
-    - name: Cache
-      uses: klever1988/cachewrtbuild@main
-      with:
-        ccache: 'true'
-        prefix: ${{ github.workspace }}/openwrt
-
-    - name: Update packages
+    - name: 更新程序包
       env:
         SCKEY: ${{ secrets.ACTIONS_TRIGGER_PAT }}
       run: |
@@ -75,53 +91,43 @@ jobs:
         mkdir NeoBird
         cd NeoBird
         # git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
-        git clone https://github.com/kiddin9/openwrt-packages.git
-
-    - name: FilePatch
-      run: |
+        git clone https://github.com/kiddin9/openwrt-packages.git   
+        
+    - name: 文件修补一
+      run: |        
         cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
-        mkdir openwrt/target/linux/ipq40xx/base-files/etc/hotplug.d/net
-        cp -f patch/21_adjust_network openwrt/target/linux/ipq40xx/base-files/etc/hotplug.d/net/21_adjust_network
-        cp -f patch/adjust_network openwrt/target/linux/ipq40xx/base-files/etc/init.d/adjust_network
-        cp -f patch/adjust_network.sh openwrt/target/linux/ipq40xx/base-files/lib/adjust_network.sh
         cd openwrt
-
         sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
         echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
-        sed -i 's/OpenWrt/NeoBird/g' package/base-files/files/bin/config_generate
-        sed -i 's/UTC/Asia\/Shanghai/g' package/base-files/files/bin/config_generate
-        sed -i 's/0.openwrt.pool.ntp.org/ntp.tencent.com/g' package/base-files/files/bin/config_generate
-        sed -i 's/1.openwrt.pool.ntp.org/ntp1.aliyun.com/g' package/base-files/files/bin/config_generate
-        sed -i 's/2.openwrt.pool.ntp.org/ntp.ntsc.ac.cn/g' package/base-files/files/bin/config_generate
-        sed -i 's/3.openwrt.pool.ntp.org/cn.ntp.org.cn/g' package/base-files/files/bin/config_generate
+        sed -i 's/ImmortalWrt/NeoBird/g' package/base-files/files/bin/config_generate        
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
-    - name: Update feeds
+        sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-firewall luci-app-opkg luci-app-upnp luci-app-autoreboot \
+        luci-base luci-compat luci-lib-ipkg luci-lib-fs \
+        coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash resolveip ds-lite swconfig luci-app-fan /" include/target.mk
+        sed -i "s/procd-ujail//" include/target.mk
+        
+    - name: 更新订阅源
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
 
-    - name: FilePatch2
+    - name: 文件修补二
       run: |
-        #rm -rf feeds/packages/lang/golang
-        #svn export https://github.com/sbwml/packages_lang_golang/branches/19.x feeds/packages/lang/golang
-
-    - name: Generate configuration file
+                
+    - name: 生成配置文件
       run: |
         cd openwrt
         rm -f ./.config*
         touch ./.config
-
+        
         #
         # ========================固件定制部分========================
         # 
-
         # 
         # 如果不对本区块做出任何编辑, 则生成默认配置固件. 
         # 
-
         # 以下为定制化固件选项和说明:
         #
-
         #
         # 有些插件/选项是默认开启的, 如果想要关闭, 请参照以下示例进行编写:
         # 
@@ -132,7 +138,6 @@ jobs:
         #         |  EOF                                    |
         #          =========================================
         #
-
         # 
         # 以下是一些提前准备好的一些插件选项.
         # 直接取消注释相应代码块即可应用. 不要取消注释代码块上的汉字说明.
@@ -143,88 +148,171 @@ jobs:
         # 
         # 无论你想要对固件进行怎样的定制, 都需要且只需要修改 EOF 回环内的内容.
         # 
-
         # 编译竞斗云固件:
+        
         cat >> .config <<EOF
         CONFIG_TARGET_ipq40xx=y
         CONFIG_TARGET_ipq40xx_generic=y
         CONFIG_TARGET_ipq40xx_generic_DEVICE_p2w_r619ac-128m=y
         EOF
-
+        
+        # USB2.0支持:
+        # cat >> .config <<EOF
+        # CONFIG_PACKAGE_kmod-usb-core=y
+        # CONFIG_PACKAGE_kmod-usb-dwc3=y
+        # CONFIG_PACKAGE_kmod-usb-dwc3-qcom=y
+        # CONFIG_PACKAGE_kmod-usb-storage=y
+        # CONFIG_PACKAGE_kmod-usb-storage-extras=y
+        # CONFIG_PACKAGE_kmod-usb-storage-uas=y
+        # CONFIG_PACKAGE_kmod-usb-xhci-hcd=y
+        # CONFIG_PACKAGE_kmod-usb3=y
+        # EOF
+        
         # IPv6支持:
         cat >> .config <<EOF
         CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
+        CONFIG_PACKAGE_ip6tables=y
+        CONFIG_PACKAGE_ip6tables-extra=y
+        CONFIG_PACKAGE_ip6tables-mod-nat=y
         CONFIG_PACKAGE_ipv6helper=y
         EOF
-
+        
         # LuCI插件选择:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_luci-app-arpbind=y
+        # CONFIG_PACKAGE_luci-app-arpbind=y
         CONFIG_PACKAGE_luci-app-adguardhome=y
         CONFIG_PACKAGE_luci-app-iptvhelper=y
         CONFIG_PACKAGE_luci-app-ddns-go=y
-        CONFIG_PACKAGE_luci-app-autoreboot=y
+        # CONFIG_PACKAGE_luci-app-cpufreq is not set
+        # CONFIG_PACKAGE_luci-app-aliddns is not set
         CONFIG_PACKAGE_luci-app-mosdns=y
-        # CONFIG_PACKAGE_luci-app-openclash=y
+        CONFIG_PACKAGE_luci-app-openclash=y
         CONFIG_PACKAGE_luci-app-argon-config=y
-        CONFIG_PACKAGE_luci-app-ttyd=y
-        # CONFIG_PACKAGE_luci-app-ddns=y
+        # CONFIG_PACKAGE_luci-app-autoreboot=y
+        CONFIG_PACKAGE_luci-app-commands=y
+        CONFIG_PACKAGE_luci-app-opkg=y
+        # CONFIG_PACKAGE_luci-app-ddns is not set
         CONFIG_PACKAGE_luci-app-firewall=y
-        # CONFIG_PACKAGE_luci-app-ramfree=y
+        # CONFIG_PACKAGE_luci-app-filetransfer=y
+        # CONFIG_PACKAGE_luci-app-passwall=y
+        # CONFIG_PACKAGE_luci-app-pushbot is not set
+        # CONFIG_PACKAGE_luci-app-ramfree is not set
+        # CONFIG_PACKAGE_luci-app-samba4 is not set
+        # CONFIG_PACKAGE_luci-app-ssr-plus is not set
+        # CONFIG_PACKAGE_luci-app-ssr-plus_INCLUDE_Xray is not set
         CONFIG_PACKAGE_luci-app-smartdns=y
-        # CONFIG_PACKAGE_luci-app-sqm=y
-        # CONFIG_PACKAGE_luci-app-turboacc=y
+        # CONFIG_PACKAGE_luci-app-sqm is not set
+        CONFIG_PACKAGE_luci-app-ttyd=y
         CONFIG_PACKAGE_luci-app-upnp=y
-        CONFIG_PACKAGE_luci-app-vlmcsd=y
+        # CONFIG_PACKAGE_luci-app-udpxy is not set
+        # CONFIG_PACKAGE_luci-app-vsftpd is not set
+        CONFIG_PACKAGE_luci-app-vlmcsd=y       
         CONFIG_PACKAGE_luci-app-wol=y
-        # CONFIG_PACKAGE_luci-app-webadmin=y
-        # CONFIG_PACKAGE_luci-app-zerotier=y
+        # CONFIG_PACKAGE_luci-app-watchcat is not set
+        # CONFIG_PACKAGE_luci-app-zerotier is not set
         EOF
-
+        
         # LuCI主题:
         cat >> .config <<EOF
+        CONFIG_PACKAGE_luci-theme-bootstrap=y
         CONFIG_PACKAGE_luci-theme-argon=y
         EOF
-
+        
         # 常用软件包:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_irqbalance=y
-        CONFIG_PACKAGE_autocore-arm=y
-        CONFIG_PACKAGE_e2fsprogs=y
-        CONFIG_PACKAGE_firewall4=y
-        # CONFIG_PACKAGE_miniupnpd-nftables=y
-        EOF
+        CONFIG_PACKAGE_dnsmasq=n
+        CONFIG_PACKAGE_dnsmasq-full=y
+        CONFIG_PACKAGE_dnsmasq_full_dhcp=y
+        CONFIG_PACKAGE_dnsmasq_full_ipset=y
 
+        CONFIG_NGINX_DAV=y
+        CONFIG_PACKAGE_luci-base=y
+        CONFIG_PACKAGE_luci-compat=y
+        CONFIG_PACKAGE_luci-lib-ipkg=y
+        CONFIG_LUCI_LANG_zh_Hans=y
+        CONFIG_LUCI_LANG_en=y
+        CONFIG_PACKAGE_coremark=y
+        CONFIG_DEVEL=y
+        CONFIG_CCACHE=n
+        CONFIG_TOOLCHAINOPTS=y
+        CONFIG_COREMARK_OPTIMIZE_O3=y
+        CONFIG_COREMARK_ENABLE_MULTITHREADING=y
+        CONFIG_COREMARK_NUMBER_OF_THREADS=16
+        CONFIG_PACKAGE_zoneinfo-asia=y
+        CONFIG_PACKAGE_my-default-settings=y
+        CONFIG_PACKAGE_wget-ssl=y
+        CONFIG_PACKAGE_curl=y
+        CONFIG_PACKAGE_htop=y
+        CONFIG_PACKAGE_nano=y
+        CONFIG_XRAY_PROVIDE_V2RAY=y
+        CONFIG_V2RAY_CORE_COMPRESS_UPX=n
+        CONFIG_XRAY_CORE_COMPRESS_UPX=n
+        CONFIG_PACKAGE_zram-swap=y
+        CONFIG_PACKAGE_kmod-lib-lz4=y
+        CONFIG_PACKAGE_kmod-lib-zstd=y
+        CONFIG_NODEJS_14=y
+
+        CONFIG_OPENSSL_OPTIMIZE_SPEED=y
+        CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
+        CONFIG_OPENSSL_ENGINE_BUILTIN=y
+        CONFIG_OPENSSL_ENGINE_BUILTIN_AFALG=y
+        CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO=y
+ 
+        CONFIG_BUSYBOX_CUSTOM=y
+        CONFIG_BUSYBOX_CONFIG_FEATURE_XARGS_SUPPORT_REPL_STR=y
+        CONFIG_BUSYBOX_CONFIG_FEATURE_CROND_SPECIAL_TIMES=y
+        CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
+
+        CONFIG_PACKAGE_bash=y
+        CONFIG_PACKAGE_ca-bundle=y
+
+        CONFIG_KERNEL_CGROUP_DEVICE=y
+        CONFIG_KERNEL_CGROUP_FREEZER=y
+        CONFIG_KERNEL_NET_CLS_CGROUP=y
+        CONFIG_KERNEL_CGROUP_NET_PRIO=y
+        CONFIG_KERNEL_MEMCG_SWAP_ENABLED=y
+        CONFIG_KERNEL_CFQ_GROUP_IOSCHED=y
+        CONFIG_KERNEL_CGROUP_PERF=y
+        CONFIG_KERNEL_CGROUP_HUGETLB=y
+        CONFIG_KERNEL_EXT4_FS_POSIX_ACL=y
+        CONFIG_KERNEL_EXT4_FS_SECURITY=y
+        CONFIG_KERNEL_BTRFS_FS_POSIX_ACL=y
+
+        CONFIG_PACKAGE_kmod-drm-nouveau=n
+        CONFIG_PACKAGE_kmod-rtl8821cu=n
+        CONFIG_PACKAGE_kmod-rtl88x2bu=n
+
+        CONFIG_PACKAGE_kmod-rtl8189es=n
+
+        CONFIG_PACKAGE_kmod-sprd_pcie=n
+
+        CONFIG_PACKAGE_kmod-pcie_mhi=n
+
+        CONFIG_PACKAGE_kmod-mii=n
+        # CONFIG_PACKAGE_automount is not set
+        # CONFIG_PACKAGE_autosamba is not set
+        EOF
+        
         # 取消编译VMware镜像以及镜像填充 (不要删除被缩进的注释符号):
         # cat >> .config <<EOF
         # # CONFIG_TARGET_IMAGES_PAD is not set
         # # CONFIG_VMDK_IMAGES is not set
         # EOF
-
         # 
         # ========================固件定制部分结束========================
         # 
-
+        
         sed -i 's/^[ \t]*//g' ./.config
-        make defconfig
-        cp ./.config ./NeoBird-config.bak
-
-    - name: SSH connection to Actions
-      uses: P3TERX/ssh2actions@v1.0.0
-      if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')
-      env:
-        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-
-    - name: Download package
+        make defconfig          
+    - name: 下载软件包
       id: package
       run: |
-        cd openwrt 
+        cd openwrt
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
         find dl -size -1024c -exec rm -f {} \;
-
-    - name: Compile the firmware
+        
+    - name: 编译固件
       id: compile
       run: |
         cd openwrt
@@ -234,22 +322,12 @@ jobs:
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
         echo "FILE_DATE=_$(date +"%Y%m%d%H%M")" >> $GITHUB_ENV
-
-    - name: Check space usage
+        
+    - name: 检查磁盘空间
       if: (!cancelled())
-      run: |
-        cd openwrt/
-        mv ./NeoBird-config.bak $GITHUB_WORKSPACE/openwrt/bin/targets/*/*
-        df -hT
+      run: df -hT
 
-    - name: Upload bin directory
-      uses: actions/upload-artifact@main
-      if: steps.compile.outputs.status == 'success' && env.UPLOAD_BIN_DIR == 'true'
-      with:
-        name: OpenWrt_bin${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
-        path: bin
-
-    - name: Organize files
+    - name: 整理文件
       id: organize
       if: env.UPLOAD_FIRMWARE == 'true' && !cancelled()
       run: |
@@ -261,26 +339,26 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
         echo "::set-output name=release_tag::$(date +"%Y.%m.%d-%H%M")"
-
-    - name: Calculate MD5
+        
+    - name: 计算编码
       run: |
         cd ${{ env.FIRMWARE }} && rm -rf sha256sums
         MD5=$(md5sum * | sed ':a;N;$!ba;s/\n/<br>/g')
         echo "MD5=$MD5" >> $GITHUB_ENV
-
-    - name: Upload firmware directory
+        
+    - name: 上传固件
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
       with:
         name: OpenWrt_firmware${{ env.DEVICE_NAME }}${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE }}
 
-    - name: Upload OpenWrt Firmware to Release
+    - name: 发布固件
       id: release
       uses: ncipollo/release-action@v1
       if: steps.organize.outputs.status == 'success' && env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        name: R${{ steps.organize.outputs.release_tag }} for R619AC
+        name: ${{ steps.organize.outputs.release_tag }} for R619AC-128M
         allowUpdates: true
         removeArtifacts: true
         tag: ${{ steps.organize.outputs.release_tag }}
@@ -296,20 +374,18 @@ jobs:
           
           `md5sum`
           > ${{ env.MD5 }}
-
-    - name: Delete workflow runs
-      uses: Mattraks/delete-workflow-runs@v2
+          
+    - name: 清理工作流程
+      uses: GitRML/delete-workflow-runs@main
       with:
-        token: ${{ github.token }}
-        repository: ${{ github.repository }}
-        retain_days: 30
-        keep_minimum_runs: 6
+        retain_days: 1
+        keep_minimum_runs: 3
 
-    - name: Remove old Releases
-      uses: dev-drprasad/delete-older-releases@v0.2.1
+    - name: 清理旧固件
+      uses: dev-drprasad/delete-older-releases@v0.1.0
       if: env.UPLOAD_RELEASE == 'true' && !cancelled()
       with:
-        keep_latest: 3
+        keep_latest: 4
         delete_tags: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
