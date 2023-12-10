@@ -91,22 +91,21 @@ jobs:
         mkdir NeoBird
         cd NeoBird
         # git clone -b 23.05 https://github.com/leesuncom/smartdns.git smartdns
-        git clone https://github.com/kiddin9/openwrt-packages.git   
+        # git clone https://github.com/kiddin9/openwrt-packages.git   
         
     - name: 文件修补一
       run: |        
         cp -f patch/rc.local openwrt/package/base-files/files/etc/rc.local
         cd openwrt
-        sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
-        echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
+        sed -i '$a src-git kiddin9 https://github.com/kiddin9/openwrt-packages.git;master' feeds.conf.default
+        sed -i "/telephony/d" feeds.conf.default
+        #sed -i '/DISTRIB_DESCRIPTION/d' package/base-files/files/etc/openwrt_release
+        #echo "DISTRIB_DESCRIPTION='NeoBird Compiled in $(TZ=UTC-8 date +%Y.%m.%d-%H%M) @ OpenWrt 23.05'" >> package/base-files/files/etc/openwrt_release
         sed -i 's/192.168.1.1/192.168.1.2/g' package/base-files/files/bin/config_generate
         sed -i 's/ImmortalWrt/NeoBird/g' package/base-files/files/bin/config_generate        
         sed -i 's/^IMG_PREFIX\:\=.*/IMG_PREFIX:=$(VERSION_DIST_SANITIZED)-$(shell TZ=UTC-8 date +"%Y.%m.%d-%H%M")-$(IMG_PREFIX_VERNUM)$(IMG_PREFIX_VERCODE)$(IMG_PREFIX_EXTRA)$(BOARD)$(if $(SUBTARGET),-$(SUBTARGET))/g' include/image.mk
 
-        sed -i "s/DEFAULT_PACKAGES:=/DEFAULT_PACKAGES:=luci-app-firewall luci-app-opkg luci-app-upnp luci-app-autoreboot \
-        luci-base luci-compat luci-lib-ipkg luci-lib-fs \
-        coremark wget-ssl curl autocore htop nano zram-swap kmod-lib-zstd kmod-tcp-bbr bash resolveip ds-lite swconfig luci-app-fan /" include/target.mk
-        sed -i "s/procd-ujail//" include/target.mk
+        
         
     - name: 更新订阅源
       run: cd openwrt && ./scripts/feeds update -a && ./scripts/feeds install -a
@@ -170,11 +169,7 @@ jobs:
         
         # IPv6支持:
         cat >> .config <<EOF
-        CONFIG_PACKAGE_dnsmasq_full_dhcpv6=y
-        CONFIG_PACKAGE_ip6tables=y
-        CONFIG_PACKAGE_ip6tables-extra=y
-        CONFIG_PACKAGE_ip6tables-mod-nat=y
-        CONFIG_PACKAGE_ipv6helper=y
+        CONFIG_IPV6=y
         EOF
         
         # LuCI插件选择:
@@ -224,71 +219,35 @@ jobs:
         CONFIG_PACKAGE_dnsmasq-full=y
         CONFIG_PACKAGE_dnsmasq_full_dhcp=y
         CONFIG_PACKAGE_dnsmasq_full_ipset=y
-
-        CONFIG_NGINX_DAV=y
+        CONFIG_PACKAGE_luci-i18n-base-zh-cn=y
+        CONFIG_PACKAGE_luci-ssl=y
+        CONFIG_PACKAGE_autocore=y
+        CONFIG_PACKAGE_uhttpd=y
+        CONFIG_PACKAGE_uhttpd-mod-ubus=y
+        CONFIG_PACKAGE_luci-compat=y
+        CONFIG_PACKAGE_luci-lib-ipkg=y
+        CONFIG_PACKAGE_luci=y
         CONFIG_PACKAGE_luci-base=y
         CONFIG_PACKAGE_luci-compat=y
         CONFIG_PACKAGE_luci-lib-ipkg=y
         CONFIG_LUCI_LANG_zh_Hans=y
         CONFIG_LUCI_LANG_en=y
-        CONFIG_PACKAGE_coremark=y
-        CONFIG_DEVEL=y
-        CONFIG_CCACHE=n
-        CONFIG_TOOLCHAINOPTS=y
-        CONFIG_COREMARK_OPTIMIZE_O3=y
-        CONFIG_COREMARK_ENABLE_MULTITHREADING=y
-        CONFIG_COREMARK_NUMBER_OF_THREADS=16
+        CONFIG_PACKAGE_coremark=y                                
         CONFIG_PACKAGE_zoneinfo-asia=y
         CONFIG_PACKAGE_my-default-settings=y
         CONFIG_PACKAGE_wget-ssl=y
         CONFIG_PACKAGE_curl=y
         CONFIG_PACKAGE_htop=y
         CONFIG_PACKAGE_nano=y
-        CONFIG_XRAY_PROVIDE_V2RAY=y
-        CONFIG_V2RAY_CORE_COMPRESS_UPX=n
-        CONFIG_XRAY_CORE_COMPRESS_UPX=n
+        
         CONFIG_PACKAGE_zram-swap=y
         CONFIG_PACKAGE_kmod-lib-lz4=y
         CONFIG_PACKAGE_kmod-lib-zstd=y
-        CONFIG_NODEJS_14=y
-
-        CONFIG_OPENSSL_OPTIMIZE_SPEED=y
-        CONFIG_OPENSSL_PREFER_CHACHA_OVER_GCM=y
-        CONFIG_OPENSSL_ENGINE_BUILTIN=y
-        CONFIG_OPENSSL_ENGINE_BUILTIN_AFALG=y
-        CONFIG_OPENSSL_ENGINE_BUILTIN_DEVCRYPTO=y
- 
-        CONFIG_BUSYBOX_CUSTOM=y
-        CONFIG_BUSYBOX_CONFIG_FEATURE_XARGS_SUPPORT_REPL_STR=y
-        CONFIG_BUSYBOX_CONFIG_FEATURE_CROND_SPECIAL_TIMES=y
-        CONFIG_BUSYBOX_CONFIG_FEATURE_SYSLOG_INFO=y
-
+        
         CONFIG_PACKAGE_bash=y
         CONFIG_PACKAGE_ca-bundle=y
-
-        CONFIG_KERNEL_CGROUP_DEVICE=y
-        CONFIG_KERNEL_CGROUP_FREEZER=y
-        CONFIG_KERNEL_NET_CLS_CGROUP=y
-        CONFIG_KERNEL_CGROUP_NET_PRIO=y
-        CONFIG_KERNEL_MEMCG_SWAP_ENABLED=y
-        CONFIG_KERNEL_CFQ_GROUP_IOSCHED=y
-        CONFIG_KERNEL_CGROUP_PERF=y
-        CONFIG_KERNEL_CGROUP_HUGETLB=y
-        CONFIG_KERNEL_EXT4_FS_POSIX_ACL=y
-        CONFIG_KERNEL_EXT4_FS_SECURITY=y
-        CONFIG_KERNEL_BTRFS_FS_POSIX_ACL=y
-
-        CONFIG_PACKAGE_kmod-drm-nouveau=n
-        CONFIG_PACKAGE_kmod-rtl8821cu=n
-        CONFIG_PACKAGE_kmod-rtl88x2bu=n
-
-        CONFIG_PACKAGE_kmod-rtl8189es=n
-
-        CONFIG_PACKAGE_kmod-sprd_pcie=n
-
-        CONFIG_PACKAGE_kmod-pcie_mhi=n
-
-        CONFIG_PACKAGE_kmod-mii=n
+        
+        
         # CONFIG_PACKAGE_automount is not set
         # CONFIG_PACKAGE_autosamba is not set
         EOF
